@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b0f">
+<title>Project 81 → 100</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+background:linear-gradient(180deg,#090b0f,#11151c);
+color:#f5f7fa;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+min-height:100vh;
+}
+
+.app{
+max-width:700px;
+margin:auto;
+padding:24px 16px 110px;
+}
+
+.small{
+font-size:12px;
+letter-spacing:3px;
+color:#8e98a6;
+}
+
+h1{
+font-size:42px;
+margin:5px 0;
+}
+
+.subtitle{
+color:#9aa3af;
+margin-bottom:25px;
+}
+
+.card{
+background:#15191f;
+border:1px solid #292f38;
+border-radius:22px;
+padding:18px;
+margin-bottom:14px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.label{
+font-size:11px;
+letter-spacing:1.5px;
+color:#929ba7;
+text-transform:uppercase;
+}
+
+.big{
+font-size:34px;
+font-weight:900;
+margin-top:6px;
+}
+
+.medium{
+font-size:22px;
+font-weight:800;
+margin-top:6px;
+}
+
+.muted{
+color:#929ba7;
+font-size:13px;
+}
+
+.progress{
+height:10px;
+background:#292f38;
+border-radius:20px;
+overflow:hidden;
+margin-top:12px;
+}
+
+.bar{
+height:100%;
+background:white;
+}
+
+input{
+width:100%;
+background:#0c0f14;
+border:1px solid #303641;
+color:white;
+padding:14px;
+border-radius:13px;
+font-size:16px;
+margin-top:9px;
+}
+
+button{
+width:100%;
+border:0;
+border-radius:14px;
+padding:14px;
+font-size:15px;
+font-weight:800;
+margin-top:9px;
+}
+
+.primary{
+background:#f5f7fa;
+color:#090b0f;
+}
+
+.secondary{
+background:#242a33;
+color:white;
+}
+
+.green{
+background:#153725;
+color:#baffd5;
+}
+
+.mission{
+display:flex;
+align-items:center;
+gap:10px;
+padding:13px 0;
+border-bottom:1px solid #292f38;
+}
+
+.mission input{
+width:20px;
+margin:0;
+}
+
+.streak{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:9px;
+margin-top:12px;
+}
+
+.streak div{
+background:#0c0f14;
+border:1px solid #292f38;
+border-radius:14px;
+padding:12px;
+}
+
+.streak strong{
+display:block;
+font-size:20px;
+margin-top:4px;
+}
+
+.bottom{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+padding:10px 16px 25px;
+background:rgba(9,11,15,.94);
+border-top:1px solid #292f38;
+}
+
+.bottom-inner{
+max-width:700px;
+margin:auto;
+display:grid;
+grid-template-columns:1fr 60px;
+gap:8px;
+}
+
+#redirect{
+display:none;
+margin-top:12px;
+background:#0c0f14;
+padding:14px;
+border-radius:14px;
+}
+
+@media(max-width:400px){
+.big{font-size:29px}
+h1{font-size:37px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="small">PROJECT</div>
+<h1>81 → 100</h1>
+<div class="subtitle">Build the life you don't need to escape from.</div>
+
+<div class="grid">
+
+<div class="card">
+<div class="label">81 → 100 Score</div>
+<div class="big" id="score">0</div>
+<div class="progress">
+<div class="bar" id="scoreBar" style="width:0%"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="label">Gambling-Free</div>
+<div class="big"><span id="gambleDays">0</span>/90</div>
+<div class="progress">
+<div class="bar" id="gambleBar" style="width:0%"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="label">Debt</div>
+<div class="big">$<span id="debtDisplay">0</span></div>
+<div class="muted">Goal: $0</div>
+</div>
+
+<div class="card">
+<div class="label">Freediving</div>
+<div class="big"><span id="depthDisplay">81</span> ft</div>
+<div class="muted">Goal: 100 ft</div>
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="label">Today's 3 Missions</div>
+
+<div id="missionList"></div>
+
+<input id="missionInput" placeholder="Add today's mission">
+
+<button class="primary" onclick="addMission()">
+Add Mission
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="label">Protect The Streak</div>
+
+<div class="streak">
+
+<div>
+🎰 Gambling-Free
+<strong id="gamblingStreak">0 days</strong>
+</div>
+
+<div>
+💸 No-Spend
+<strong id="spendStreak">0 days</strong>
+</div>
+
+<div>
+🥩 Clean Eating
+<strong id="foodStreak">0 days</strong>
+</div>
+
+<div>
+🏋️ Training
+<strong id="trainingStreak">0 days</strong>
+</div>
+
+</div>
+
+<button class="secondary" onclick="streak('gambling')">
++ Gambling-Free Day
+</button>
+
+<button class="secondary" onclick="streak('spend')">
++ No-Spend Day
+</button>
+
+<button class="secondary" onclick="streak('food')">
++ Clean-Eating Day
+</button>
+
+<button class="secondary" onclick="streak('training')">
++ Training Day
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="label">Money + Performance</div>
+
+<input type="number" id="debtInput" placeholder="Current debt">
+
+<input type="number" id="depthInput" placeholder="Freediving PB (feet)">
+
+<input id="benchInput" placeholder="Bench — example: 225 × 8">
+
+<button class="primary" onclick="saveMetrics()">
+Update War Room
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="label">Body</div>
+
+<div class="medium">
+Bench: <span id="benchDisplay">225 × 8</span>
+</div>
+
+<div class="muted">
+Strong. Lean. Athletic. Capable.
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="label">Business War Room</div>
+
+<input type="number" id="vovInput"
+placeholder="Venture Out Vegas monthly revenue">
+
+<input type="number" id="impactInput"
+placeholder="Venture Out Impact monthly revenue">
+
+<input type="number" id="leadInput"
+placeholder="Impact leads this month">
+
+<button class="primary" onclick="saveBusiness()">
+Update Business
+</button>
+
+<br><br>
+
+<div class="grid">
+
+<div>
+<div class="label">VOV</div>
+<div class="medium">$<span id="vovDisplay">0</span></div>
+</div>
+
+<div>
+<div class="label">Impact</div>
+<div class="medium">$<span id="impactDisplay">0</span></div>
+</div>
+
+</div>
+
+<br>
+
+<div class="label">Impact Leads</div>
+<div class="medium" id="leadDisplay">0</div>
+
+</div>
+
+<div class="card">
+
+<div class="label">Weekly Boss Battle</div>
+
+<div class="medium" id="bossDisplay">
+Pick the uncomfortable thing you need to kill this week.
+</div>
+
+<input id="bossInput"
+placeholder="Example: FINISH TAXES">
+
+<button class="primary" onclick="saveBoss()">
+Set Boss Battle
+</button>
+
+</div>
+
+</div>
+
+<div class="bottom">
+
+<div class="bottom-inner">
+
+<button class="primary" onclick="bored()">
+⚡ I'M BORED — GIVE ME A MISSION
+</button>
+
+<button class="secondary" onclick="tempted()">
+🎰
+</button>
+
+</div>
+
+<div id="redirect"></div>
+
+</div>
+
+<script>
+
+let data = JSON.parse(
+localStorage.getItem("project81100")
+) || {
+
+debt:0,
+depth:81,
+bench:"225 × 8",
+
+gambling:0,
+spend:0,
+food:0,
+training:0,
+
+vov:0,
+impact:0,
+leads:0,
+
+boss:"",
+missions:[]
+
+};
+
+function save(){
+localStorage.setItem(
+"project81100",
+JSON.stringify(data)
+);
+render();
+}
+
+function render(){
+
+debtDisplay.innerText =
+Number(data.debt).toLocaleString();
+
+depthDisplay.innerText = data.depth;
+
+benchDisplay.innerText = data.bench;
+
+gamblingStreak.innerText =
+data.gambling+" days";
+
+gambleDays.innerText=data.gambling;
+
+spendStreak.innerText =
+data.spend+" days";
+
+foodStreak.innerText =
+data.food+" days";
+
+trainingStreak.innerText =
+data.training+" days";
+
+vovDisplay.innerText =
+Number(data.vov).toLocaleString();
+
+impactDisplay.innerText =
+Number(data.impact).toLocaleString();
+
+leadDisplay.innerText=data.leads;
+
+bossDisplay.innerText =
+data.boss ||
+"Pick the uncomfortable thing you need to kill this week.";
+
+gambleBar.style.width =
+Math.min(100,data.gambling/90*100)+"%";
+
+let depthProgress =
+Math.max(0,
+Math.min(100,
+(data.depth-81)/19*100));
+
+let missionProgress =
+data.missions.length
+? data.missions.filter(x=>x.done).length /
+data.missions.length
+:0;
+
+let score=Math.round(
+Math.min(
+100,
+depthProgress*.30 +
+Math.min(30,data.gambling/3) +
+missionProgress*40
+)
+);
+
+scoreBar.style.width=score+"%";
+document.getElementById("score").innerText=score;
+
+missionList.innerHTML="";
+
+data.missions.forEach((m,i)=>{
+
+let row=document.createElement("div");
+
+row.className="mission";
+
+row.innerHTML=`
+<input type="checkbox"
+${m.done?"checked":""}
+onchange="toggleMission(${i})">
+
+<span style="
+${m.done?'text-decoration:line-through;color:#747d89':''}
+">
+${m.text}
+</span>
+`;
+
+missionList.appendChild(row);
+
+});
+
+}
+
+function addMission(){
+
+let text=missionInput.value.trim();
+
+if(!text)return;
+
+if(data.missions.length>=3){
+alert("Three missions max. Keep today simple.");
+return;
+}
+
+data.missions.push({
+text:text,
+done:false
+});
+
+missionInput.value="";
+
+save();
+
+}
+
+function toggleMission(i){
+
+data.missions[i].done =
+!data.missions[i].done;
+
+save();
+
+}
+
+function streak(type){
+
+data[type]++;
+
+save();
+
+}
+
+function saveMetrics(){
+
+if(debtInput.value!=="")
+data.debt=Number(debtInput.value);
+
+if(depthInput.value!=="")
+data.depth=Number(depthInput.value);
+
+if(benchInput.value!=="")
+data.bench=benchInput.value;
+
+save();
+
+}
+
+function saveBusiness(){
+
+if(vovInput.value!=="")
+data.vov=Number(vovInput.value);
+
+if(impactInput.value!=="")
+data.impact=Number(impactInput.value);
+
+if(leadInput.value!=="")
+data.leads=Number(leadInput.value);
+
+save();
+
+}
+
+function saveBoss(){
+
+data.boss=bossInput.value;
+
+save();
+
+}
+
+let missions=[
+
+"Send 3 Venture Out Impact follow-ups.",
+
+"Audit one Venture Out Vegas tour for profitability.",
+
+"Take Wolfie on a 30-minute walk.",
+
+"Do a focused 45-minute workout.",
+
+"Spend 30 minutes on taxes or bookkeeping.",
+
+"Clean one area of the house.",
+
+"Prep tomorrow's clean meals.",
+
+"Do 30 minutes of Impact prospecting.",
+
+"Create one piece of VOV content.",
+
+"Put the phone down and get outside."
+
+];
+
+function bored(){
+
+let m =
+missions[
+Math.floor(
+Math.random()*missions.length
+)
+];
+
+redirect.style.display="block";
+
+redirect.innerHTML=
+"<strong>YOUR MISSION:</strong><br><br>"+m;
+
+}
+
+function tempted(){
+
+let alternatives=[
+
+"Leave the casino environment and take Wolfie somewhere.",
+
+"Go lift. Chase a PR instead of a loss.",
+
+"Put the gambling money toward debt right now.",
+
+"Go home, cook something clean and enjoy the house.",
+
+"Spend 30 minutes building Venture Out Impact.",
+
+"Plan the next freediving adventure.",
+
+"Charge the Tesla somewhere else and go for a walk."
+
+];
+
+let choice =
+alternatives[
+Math.floor(
+Math.random()*alternatives.length)
+];
+
+redirect.style.display="block";
+
+redirect.innerHTML=
+
+"<strong>PROTECT THE STREAK.</strong><br><br>"+
+"Do not chase. You don't need to win anything back.<br><br>"+
+"<strong>"+choice+"</strong>";
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
