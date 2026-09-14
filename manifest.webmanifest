@@ -1,0 +1,18 @@
+{
+  "name": "Project 0→100",
+  "short_name": "0→100",
+  "start_url": "/command-center.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#090b0f",
+  "theme_color": "#090b0f",
+  "description": "Personal command center, debt tracker and business OS.",
+  "icons": [
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
