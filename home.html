@@ -11,47 +11,65 @@
 <iframe id="shell" src="/index.html?embedded=1" title="Project 0 → 100"></iframe>
 <script>
 const shell=document.getElementById('shell');
+const KEY='project0100_v4';
+const SEED='gambling_seed_7_2026_09_14';
+function readState(w){try{return JSON.parse(w.localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
+function writeState(w,s){w.localStorage.setItem(KEY,JSON.stringify(s))}
 function install(){
   const outer=shell.contentDocument;if(!outer)return;
   const app=outer.getElementById('app');if(!app)return;
   const inject=()=>{
-    const d=app.contentDocument,w=app.contentWindow;if(!d||!w||!w.data)return;
-    w.data.streakCheckins=w.data.streakCheckins||{};
-    const today=w.iso();w.data.streakCheckins[today]=w.data.streakCheckins[today]||{};
-    w.undoDailyStreak=function(track){
-      const t=w.iso();w.data.streakCheckins[t]=w.data.streakCheckins[t]||{};
-      if(!w.data.streakCheckins[t][track])return;
-      w.data.streakCheckins[t][track]=false;
-      w.data[track]=Math.max(0,Number(w.data[track]||0)-1);
-      w.save();
+    const d=app.contentDocument,w=app.contentWindow;if(!d||!w)return;
+    let state=readState(w);
+    if(!w.localStorage.getItem(SEED)){
+      if(Number(state.gambling||0)<7)state.gambling=7;
+      state.streakCheckins=state.streakCheckins||{};
+      writeState(w,state);
+      w.localStorage.setItem(SEED,'1');
+      setTimeout(()=>app.contentWindow.location.reload(),30);
+      return;
+    }
+    function today(){const x=new Date();return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
+    function commit(mutator){
+      const s=readState(w);mutator(s);writeState(w,s);app.contentWindow.location.reload();
+    }
+    w.markGamblingFreeToday=function(){
+      commit(s=>{
+        s.streakCheckins=s.streakCheckins||{};const t=today();s.streakCheckins[t]=s.streakCheckins[t]||{};
+        if(!s.streakCheckins[t].gambling){s.streakCheckins[t].gambling=true;s.gambling=Number(s.gambling||0)+1;}
+      });
+    };
+    w.undoGamblingToday=function(){
+      commit(s=>{
+        s.streakCheckins=s.streakCheckins||{};const t=today();s.streakCheckins[t]=s.streakCheckins[t]||{};
+        if(s.streakCheckins[t].gambling){s.streakCheckins[t].gambling=false;s.gambling=Math.max(0,Number(s.gambling||0)-1);}
+      });
     };
     w.resetGamblingStreak=function(){
       if(!w.confirm('Reset your gambling-free streak to 0?'))return;
-      w.data.gambling=0;
-      const t=w.iso();w.data.streakCheckins[t]=w.data.streakCheckins[t]||{};
-      w.data.streakCheckins[t].gambling=false;
-      w.save();
+      commit(s=>{s.gambling=0;s.streakCheckins=s.streakCheckins||{};const t=today();s.streakCheckins[t]=s.streakCheckins[t]||{};s.streakCheckins[t].gambling=false;});
     };
     function draw(){
-      const days=d.getElementById('gambleDays');if(!days)return;
+      const s=readState(w),days=d.getElementById('gambleDays');if(!days)return;
+      const n=Number(s.gambling||0);days.textContent=n;
+      const bar=d.getElementById('gambleBar');if(bar)bar.style.width=Math.min(100,n/90*100)+'%';
+      const sg=d.getElementById('streakGambling');if(sg)sg.textContent=n+' days';
       const card=days.closest('.card');if(!card)return;
-      let box=d.getElementById('gamblingQuickControls');
-      if(!box){box=d.createElement('div');box.id='gamblingQuickControls';card.appendChild(box);}
-      const protectedToday=!!((w.data.streakCheckins[w.iso()]||{}).gambling);
-      box.innerHTML='<div style="font-size:11px;margin-top:9px;font-weight:800;color:'+(protectedToday?'#63e6a6':'#97a1ad')+'">'+(protectedToday?'Today: ✅ Protected':'Today: not checked in')+'</div>'+
+      let box=d.getElementById('gamblingQuickControls');if(!box){box=d.createElement('div');box.id='gamblingQuickControls';card.appendChild(box);}
+      const protectedToday=!!((((s.streakCheckins||{})[today()]||{}).gambling));
+      box.innerHTML='<div style="font-size:11px;margin-top:9px;font-weight:800;color:'+(protectedToday?'#63e6a6':'#97a1ad')+'">'+(protectedToday?'Today: ✅ Protected':'Current streak: '+n+' days')+'</div>'+
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">'+
-      '<button class="btn '+(protectedToday?'good':'secondary')+' sm" onclick="completeDailyStreak(\'gambling\')">'+(protectedToday?'✓ Added today':'✅ Gambling-Free Today')+'</button>'+
-      '<button class="btn ghost sm" onclick="undoDailyStreak(\'gambling\')">↩ Undo Today</button></div>'+
+      '<button class="btn '+(protectedToday?'good':'secondary')+' sm" onclick="markGamblingFreeToday()">'+(protectedToday?'✓ Added today':'✅ Gambling-Free Today')+'</button>'+
+      '<button class="btn ghost sm" onclick="undoGamblingToday()">↩ Undo Today</button></div>'+
       '<button class="btn ghost sm" style="width:100%;margin-top:6px;font-size:10px" onclick="resetGamblingStreak()">Reset streak</button>';
     }
-    const oldRender=w.render;
-    if(!w.__gamblingControlsWrapped){w.render=function(){oldRender();draw();};w.__gamblingControlsWrapped=true;}
     draw();
+    setTimeout(draw,250);
   };
-  app.addEventListener('load',()=>setTimeout(inject,50));
-  setTimeout(inject,100);
+  app.addEventListener('load',()=>setTimeout(inject,80));
+  setTimeout(inject,150);
 }
-shell.addEventListener('load',()=>{setTimeout(install,50);setTimeout(install,350)});
+shell.addEventListener('load',()=>{setTimeout(install,80);setTimeout(install,450)});
 </script>
 </body>
 </html>
