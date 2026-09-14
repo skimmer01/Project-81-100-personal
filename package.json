@@ -1,0 +1,13 @@
+{
+  "name": "project-0-100",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "latest",
+    "@netlify/functions": "latest",
+    "web-push": "latest"
+  },
+  "devDependencies": {
+    "@types/web-push": "latest"
+  }
+}
