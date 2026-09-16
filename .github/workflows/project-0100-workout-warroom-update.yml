@@ -1,0 +1,61 @@
+name: Project 0-100 UI Update
+on:
+  push:
+    paths:
+      - '.github/workflows/project-0100-workout-warroom-update.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update app UI
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('app.html')
+          s=p.read_text()
+
+          old='''<div class="grid2"><div class="card" onclick="goView('moneyView')"><div class="label">Debt War Room</div><div class="big">$<span id="debtTotalHome">0</span></div><div class="small">Tap to attack it →</div></div><div class="card"><div class="label">Bench</div><div class="big" id="benchHome">225 × 8</div><div class="small">Strong. Lean. Athletic.</div></div></div>'''
+          new='''<div class="grid2"><div class="card" onclick="goView('moneyView')" style="cursor:pointer"><div class="label">⚔️ Debt War Room</div><div class="med">KEEP MOVING FORWARD</div><div class="small" style="margin-top:7px">Every dollar paid is another step toward freedom.</div><div class="small" style="margin-top:10px">Tap to enter War Room →</div></div><div class="card"><div class="label">🏋️ Workout</div><select id="workoutTypeHome" style="margin-top:9px" onchange="setWorkoutType(this.value)"><option>Gym</option><option>Swimming</option><option>Kayaking</option><option>Handstands</option><option>Other</option></select><div class="small" id="workoutHomeTitle" style="margin-top:9px">Choose your move.</div><button class="btn secondary sm" style="width:100%;margin-top:9px" onclick="event.stopPropagation();goView('bodyView')">⚡ Inspire Me</button></div></div>'''
+          if old not in s: raise SystemExit('homepage target not found')
+          s=s.replace(old,new,1)
+
+          old='''<div class="card"><div class="row"><div><div class="label">Today's Workout</div><div class="med" id="workoutTitle"></div></div><button class="btn secondary sm" onclick="cycleWorkout()">Swap</button></div><div id="workoutList"></div><div class="stack" style="margin-top:10px"><input id="benchInput" placeholder="Bench update — example: 225 × 8"><button class="btn primary" onclick="saveBench()">Save Performance</button></div></div>'''
+          new='''<div class="card"><div class="label">🏋️ Workout</div><div class="small">What are we doing today?</div><select id="workoutType" style="margin-top:10px" onchange="setWorkoutType(this.value)"><option>Gym</option><option>Swimming</option><option>Kayaking</option><option>Handstands</option><option>Other</option></select><div class="row" style="margin-top:12px"><div><div class="label">Today's Workout</div><div class="med" id="workoutTitle"></div></div><button class="btn secondary sm" onclick="cycleWorkout()">Swap</button></div><div id="workoutList"></div><div class="label" style="margin-top:14px">⚡ Need Inspiration?</div><div class="grid3" style="margin-top:9px"><button class="btn secondary sm" onclick="inspireWorkout()">Give Me One</button><button class="btn secondary sm" onclick="repeatPastWorkout()">Past Workout</button><button class="btn primary sm" onclick="surpriseWorkout()">🎲 Surprise Me</button></div><div class="panel" id="workoutPanel"></div><div class="stack" style="margin-top:10px"><input id="benchInput" placeholder="Performance note — example: Bench 225 × 8"><button class="btn secondary" onclick="saveBench()">Save Performance</button><button class="btn good" onclick="completeWorkout()">✓ Complete Workout</button></div></div>'''
+          if old not in s: raise SystemExit('workout card target not found')
+          s=s.replace(old,new,1)
+
+          old="""const $=id=>document.getElementById(id);"""
+          libs="""const workoutLibraries={Gym:workouts,Swimming:[['Swim — Technique + Engine',['Easy warm-up — 400 yd','Drills — 6 × 50 yd','Steady swim — 6 × 100 yd','Easy cooldown — 200 yd']],['Swim — Easy Recovery',['Easy continuous swim — 25 min','4 × 50 yd relaxed form','5 min easy cooldown']]],Kayaking:[['Kayak — Endurance',['Easy paddle — 10 min','Steady paddle — 45 min','5 × 1 min strong / 2 min easy','Easy paddle home — 10 min']],['Kayak — Adventure Day',['Pick a route and paddle 60+ min','Keep the pace conversational','Finish with 5 strong efforts']]],Handstands:[['Handstands — 10 Minute Skill',['Wrist prep — 2 min','Wall holds — 3 × 30 sec','Kick-up practice — 4 min','Hollow body hold — 2 × 30 sec']],['Handstands — Strength',['Wrist + shoulder prep — 3 min','Wall walks — 3 × 3','Chest-to-wall hold — 3 × 30 sec','Kick-up practice — 5 min']]],Other:[['Move — Your Choice',['Choose something active','Move for at least 30 minutes','Finish feeling better than you started']]]};
+          const $=id=>document.getElementById(id);"""
+          if old not in s: raise SystemExit('library insert target not found')
+          s=s.replace(old,libs,1)
+
+          old="""function base(){return{gambling:0,spend:0,food:0,training:0,bench:'225 × 8',depth:81,vov:0,impact:0,missionsByDate:{},anchorsByDate:{},calendar:{},nutrition:{},workoutByDate:{},debts:"""
+          new="""function base(){return{gambling:0,spend:0,food:0,training:0,bench:'225 × 8',depth:81,vov:0,impact:0,missionsByDate:{},anchorsByDate:{},calendar:{},nutrition:{},workoutByDate:{},workoutTypeByDate:{},workoutHistory:[],debts:"""
+          if old not in s: raise SystemExit('base target not found')
+          s=s.replace(old,new,1)
+
+          old="""$('streakTraining').textContent=data.training+' days';$('benchHome').textContent=data.bench;$('debtTotalHome').textContent=money(data.debts.reduce((s,d)=>s+Number(d.balance||0),0));let h="""
+          new="""$('streakTraining').textContent=data.training+' days';let h="""
+          if old not in s: raise SystemExit('home render target not found')
+          s=s.replace(old,new,1)
+
+          old="""function workoutIndex(){if(data.workoutByDate[iso()]===undefined)data.workoutByDate[iso()]=new Date().getDay()%workouts.length;return data.workoutByDate[iso()]}function renderWorkout(){let w=workouts[workoutIndex()];$('workoutTitle').textContent=w[0];$('workoutList').innerHTML=w[1].map(x=>`<div class=\"exercise\">${esc(x)}</div>`).join('')}function cycleWorkout(){data.workoutByDate[iso()]=(workoutIndex()+1)%workouts.length;save()}function saveBench(){let v=$('benchInput').value.trim();if(v)data.bench=v;$('benchInput').value='';save()}"""
+          new="""function workoutType(){return data.workoutTypeByDate[iso()]||'Gym'}function workoutIndex(){let lib=workoutLibraries[workoutType()]||workouts;if(data.workoutByDate[iso()]===undefined)data.workoutByDate[iso()]=new Date().getDay()%lib.length;return Math.min(data.workoutByDate[iso()],lib.length-1)}function currentWorkout(){let lib=workoutLibraries[workoutType()]||workouts;return lib[workoutIndex()]||lib[0]}function renderWorkout(){let t=workoutType(),w=currentWorkout(),a=$('workoutType'),b=$('workoutTypeHome');if(a)a.value=t;if(b)b.value=t;if($('workoutTitle'))$('workoutTitle').textContent=w[0];if($('workoutHomeTitle'))$('workoutHomeTitle').textContent=w[0];if($('workoutList'))$('workoutList').innerHTML=w[1].map(x=>`<div class=\"exercise\">${esc(x)}</div>`).join('')}function setWorkoutType(t){data.workoutTypeByDate[iso()]=t;data.workoutByDate[iso()]=0;save()}function cycleWorkout(){let lib=workoutLibraries[workoutType()]||workouts;data.workoutByDate[iso()]=(workoutIndex()+1)%lib.length;save()}function inspireWorkout(){cycleWorkout();let p=$('workoutPanel');if(p){p.classList.add('show');p.innerHTML='<strong>LET’S MOVE.</strong><br><br>'+esc(currentWorkout()[0])+' is loaded for today.'}}function surpriseWorkout(){let types=Object.keys(workoutLibraries),t=types[Math.floor(Math.random()*types.length)],lib=workoutLibraries[t];data.workoutTypeByDate[iso()]=t;data.workoutByDate[iso()]=Math.floor(Math.random()*lib.length);save();let p=$('workoutPanel');if(p){p.classList.add('show');p.innerHTML='<strong>🎲 SURPRISE ME:</strong><br><br>'+esc(t)+' — '+esc(currentWorkout()[0])}}function repeatPastWorkout(){let h=data.workoutHistory&&data.workoutHistory.length?data.workoutHistory[data.workoutHistory.length-1]:null,p=$('workoutPanel');if(!h){if(p){p.classList.add('show');p.innerHTML='Complete a workout first and I’ll save it here for a future repeat.'}return}data.workoutTypeByDate[iso()]=h.type;let lib=workoutLibraries[h.type]||workouts,i=lib.findIndex(w=>w[0]===h.title);data.workoutByDate[iso()]=i<0?0:i;save();if(p){p.classList.add('show');p.innerHTML='<strong>PAST WORKOUT LOADED:</strong><br><br>'+esc(h.title)}}function completeWorkout(){let w=currentWorkout();data.workoutHistory=data.workoutHistory||[];data.workoutHistory.push({date:iso(),type:workoutType(),title:w[0]});if(data.workoutHistory.length>30)data.workoutHistory=data.workoutHistory.slice(-30);let a=anchors(iso());if(!a.workout){a.workout=true;data.training++}save();let p=$('workoutPanel');if(p){p.classList.add('show');p.innerHTML='<strong>✓ WORKOUT COMPLETE.</strong><br><br>Another rep toward 100.'}}function saveBench(){let v=$('benchInput').value.trim();if(v)data.bench=v;$('benchInput').value='';save()}"""
+          if old not in s: raise SystemExit('workout JS target not found')
+          s=s.replace(old,new,1)
+
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config user.name "Project 0-100 Builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add app.html
+          git commit -m "Upgrade War Room and workout experience"
+          git push
