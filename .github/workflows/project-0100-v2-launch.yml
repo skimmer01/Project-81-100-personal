@@ -1,7 +1,8 @@
 name: Project 0-100 V2 Launch
-on:
+'on':
   push:
-    paths: ['.github/workflows/project-0100-v2-launch.yml']
+    paths:
+      - .github/workflows/project-0100-v2-launch.yml
 permissions:
   contents: write
 jobs:
@@ -14,23 +15,20 @@ jobs:
         run: |
           python3 <<'PY'
           from pathlib import Path
-          p=Path('app.html'); s=p.read_text()
+          p=Path('app.html')
+          s=p.read_text()
           s=s.replace('<title>Project 0 → 100</title>','<title>Project 0 → 100 — V2</title>',1)
-          s=s.replace(':root{--bg:#090b0f;--panel:#15191f;--line:#2b323c;--text:#f5f7fa;--muted:#97a1ad;--accent:#27d3ef;--good:#63e6a6;--danger:#ff6b78}',':root{--bg:#090b0f;--panel:#15191f;--line:#2b323c;--text:#f5f7fa;--muted:#97a1ad;--accent:#27d3ef;--good:#63e6a6;--danger:#ff6b78;--warm:#ffc86b;--purple:#a98cff}',1)
-          old='<div class="kicker">PROJECT</div><h1>0 → 100</h1><div class="sub">Build the life you don\'t need to escape from.</div>'
-          new='<div class="kicker">PROJECT • V2</div><h1>0 → 100</h1><div class="sub">Build the life you don\'t need to escape from.</div><div class="card" style="background:linear-gradient(135deg,rgba(39,211,239,.10),rgba(99,230,166,.05))"><div class="label">TODAY\'S MOMENTUM</div><div class="med" id="momentumMessage">One good decision creates the next one.</div><div class="small" style="margin-top:7px">Progress over perfection. Comebacks count.</div></div>'
+          old="<div class=\"kicker\">PROJECT</div><h1>0 → 100</h1><div class=\"sub\">Build the life you don't need to escape from.</div>"
+          new="<div class=\"kicker\">PROJECT • V2</div><h1>0 → 100</h1><div class=\"sub\">Build the life you don't need to escape from.</div><div class=\"card\" style=\"background:linear-gradient(135deg,rgba(39,211,239,.10),rgba(99,230,166,.05))\"><div class=\"label\">TODAY'S MOMENTUM</div><div class=\"med\" id=\"momentumMessage\">One good decision creates the next one.</div><div class=\"small\" style=\"margin-top:7px\">Progress over perfection. Comebacks count.</div></div>"
           if old not in s: raise SystemExit('hero target missing')
-          s=s.replace(old,new,1)
-          old='<div class="grid2"><div class="card" onclick="goView(\'moneyView\')" style="cursor:pointer"><div class="label">⚔️ Debt War Room</div><div class="med">KEEP MOVING FORWARD</div><div class="small" style="margin-top:7px">Every dollar paid is another step toward freedom.</div><div class="small" style="margin-top:10px">Tap to enter War Room →</div></div><div class="card"><div class="label">🏋️ Workout</div><select id="workoutTypeHome" style="margin-top:9px" onchange="setWorkoutType(this.value)"><option>Gym</option><option>Swimming</option><option>Kayaking</option><option>Handstands</option><option>Other</option></select><div class="small" id="workoutHomeTitle" style="margin-top:9px">Choose your move.</div><button class="btn secondary sm" style="width:100%;margin-top:9px" onclick="event.stopPropagation();goView(\'bodyView\')">⚡ Inspire Me</button></div></div>'
-          new='<div class="card" onclick="goView(\'moneyView\')" style="cursor:pointer"><div class="label">⚔️ WAR ROOM • MOMENTUM</div><div class="med">$<span id="debtFreedomHome">0</span> ELIMINATED</div><div class="small" style="margin-top:7px">Every dollar paid is another step toward freedom.</div><div class="small" style="margin-top:10px">ENTER WAR ROOM →</div></div><div class="card"><div class="label">🏋️ MOVE TODAY</div><select id="workoutTypeHome" style="margin-top:9px" onchange="setWorkoutType(this.value)"><option>Gym</option><option>Swimming</option><option>Kayaking</option><option>Handstands</option><option>Other</option></select><div class="med" id="workoutHomeTitle" style="margin-top:9px">Choose your move.</div><div class="grid2" style="margin-top:9px"><button class="btn secondary sm" onclick="goView(\'bodyView\')">⚡ Inspire Me</button><button class="btn primary sm" onclick="surpriseWorkout();goView(\'bodyView\')">🎲 Surprise Me</button></div></div>'
-          if old not in s: raise SystemExit('home cards target missing')
           s=s.replace(old,new,1)
           marker='<div class="card"><div class="label">Noom-ish Daily Check-In</div>'
           records='''<div class="card"><div class="row"><div><div class="label">🏆 PERSONAL RECORDS</div><div class="small">Proof of what you are capable of.</div></div><button class="btn ghost sm" onclick="toggleRecords()">Manage</button></div><div id="recordList" style="margin-top:10px"></div><div class="panel" id="recordPanel"><div class="stack"><input id="recordName" placeholder="Record — e.g. Handstand"><input id="recordValue" placeholder="Best — e.g. 45 sec"><input id="recordGoal" placeholder="Next goal — optional"><button class="btn primary" onclick="addRecord()">+ Add Record</button></div></div></div>'''
           if marker not in s: raise SystemExit('records marker missing')
           s=s.replace(marker,records+marker,1)
-          s=s.replace('workoutHistory:[],debts:','workoutHistory:[],records:[{name:\'Freedive\',value:\'81 ft\',goal:\'100 ft\'},{name:\'Bench Press\',value:\'275 lb × 1\',goal:\'300 lb\'}],comebacks:0,debts:',1)
-          s=s.replace("$('streakTraining').textContent=data.training+' days';let h=","$('streakTraining').textContent=data.training+' days';let totalDebt=data.debts.reduce((s,d)=>s+Number(d.balance||0),0);if($('debtFreedomHome'))$('debtFreedomHome').textContent=money(Math.max(0,START-totalDebt));let doneToday=Object.values(anchors(iso())).filter(Boolean).length;if($('momentumMessage'))$('momentumMessage').textContent=doneToday>=3?'TODAY IS A WIN. Keep stacking it.':doneToday===2?'One more anchor and today is locked in.':doneToday===1?'Momentum started. Keep moving.':'One good decision creates the next one.';let h=",1)
+          target='workoutHistory:[],debts:'
+          if target not in s: raise SystemExit('data target missing')
+          s=s.replace(target,"workoutHistory:[],records:[{name:'Freedive',value:'81 ft',goal:'100 ft'},{name:'Bench Press',value:'275 lb × 1',goal:'300 lb'}],comebacks:0,debts:",1)
           old='function render(){renderHome();renderMissions();renderAnchors();renderCalendar();renderPile();renderVov();renderLeads();renderDebt();renderWorkout();renderNutrition();renderMore()}'
           new='function render(){renderHome();renderMissions();renderAnchors();renderCalendar();renderPile();renderVov();renderLeads();renderDebt();renderWorkout();renderRecords();renderNutrition();renderMore()}'
           if old not in s: raise SystemExit('render target missing')
@@ -40,12 +38,10 @@ jobs:
           target='function renderNutrition()'
           if target not in s: raise SystemExit('nutrition function missing')
           s=s.replace(target,insert+target,1)
-          old="function tempted(){let p=$('actionPanel');p.classList.add('show');p.innerHTML='<strong>DO NOT GAMBLE.</strong><br><br>You are not bored enough to buy chaos. Walk Wolfie. Train. Drive somewhere. Call somebody. Do literally anything that does not restart the clock.'}"
-          new="function tempted(){let p=$('actionPanel');p.classList.add('show');p.innerHTML='<strong>🛡️ PROTECTION MODE</strong><br><br><b>Do not make the decision right now.</b><br><br>Give yourself 20 minutes. Leave the gambling environment. Walk, train, drive somewhere safe, or call somebody you trust.<br><br><button class=\"btn good\" style=\"width:100%\" onclick=\"comeback()\">I chose something else ✓</button>'}function comeback(){data.comebacks=(data.comebacks||0)+1;let p=$('actionPanel');p.innerHTML='<strong>✓ THAT COUNTS.</strong><br><br>You did not need a perfect day. You needed the next good decision.<br><br>Comebacks: '+data.comebacks;save()}"
-          if old in s:s=s.replace(old,new,1)
           p.write_text(s)
           PY
       - name: Commit V2
+        shell: bash
         run: |
           git config user.name "Project 0-100 Builder"
           git config user.email "actions@users.noreply.github.com"
